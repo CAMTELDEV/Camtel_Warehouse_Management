@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dashboard Form View with KPI Cards -->
+    <record id="view_camtel_dashboard_form" model="ir.ui.view">
+        <field name="name">camtel.dashboard.form</field>
+        <field name="model">camtel.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Warehouse Dashboard" create="false" delete="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="warehouse_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <!-- KPI Dashboard -->
+                    <div class="camtel_dashboard_container">
+                        <!-- Inventory Section -->
+                        <div class="dashboard_section">
+                            <h2>📦 Inventory Overview</h2>
+                            <div class="kpi_cards_row">
+                                <div class="kpi_card kpi_primary">
+                                    <div class="kpi_value">
+                                        <field name="total_inventory_value" widget="monetary"/>
+                                    </div>
+                                    <div class="kpi_label">Total Inventory Value</div>
+                                </div>
+                                <div class="kpi_card kpi_info">
+                                    <div class="kpi_value">
+                                        <field name="total_products"/>
+                                    </div>
+                                    <div class="kpi_label">Total Products</div>
+                                </div>
+                                <div class="kpi_card kpi_warning">
+                                    <div class="kpi_value">
+                                        <field name="low_stock_products"/>
+                                    </div>
+                                    <div class="kpi_label">Low Stock Alert</div>
+                                </div>
+                                <div class="kpi_card kpi_danger">
+                                    <div class="kpi_value">
+                                        <field name="out_of_stock_products"/>
+                                    </div>
+                                    <div class="kpi_label">Out of Stock</div>
+                                </div>
+                            </div>
+                            <div class="dashboard_action">
+                                <button name="action_view_inventory"
+                                        type="object"
+                                        string="View Detailed Inventory Analysis"
+                                        class="btn-primary"/>
+                            </div>
+                        </div>
+
+                        <!-- Purchase Orders Section -->
+                        <div class="dashboard_section">
+                            <h2>🛒 Purchase Orders</h2>
+                            <div class="kpi_cards_row">
+                                <div class="kpi_card kpi_warning">
+                                    <div class="kpi_value">
+                                        <field name="pending_po_count"/>
+                                    </div>
+                                    <div class="kpi_label">Pending Orders</div>
+                                </div>
+                                <div class="kpi_card kpi_primary">
+                                    <div class="kpi_value">
+                                        <field name="pending_po_value" widget="monetary"/>
+                                    </div>
+                                    <div class="kpi_label">Pending Value</div>
+                                </div>
+                                <div class="kpi_card kpi_success">
+                                    <div class="kpi_value">
+                                        <field name="received_po_count"/>
+                                    </div>
+                                    <div class="kpi_label">Received This Month</div>
+                                </div>
+                            </div>
+                            <div class="dashboard_action">
+                                <button name="action_view_purchases"
+                                        type="object"
+                                        string="View Purchase Analysis"
+                                        class="btn-primary"/>
+                            </div>
+                        </div>
+
+                        <!-- Stock Movements Section -->
+                        <div class="dashboard_section">
+                            <h2>🚚 Stock Movements</h2>
+                            <div class="kpi_cards_row">
+                                <div class="kpi_card kpi_success">
+                                    <div class="kpi_value">
+                                        <field name="incoming_shipments"/>
+                                    </div>
+                                    <div class="kpi_label">Incoming Shipments</div>
+                                </div>
+                                <div class="kpi_card kpi_info">
+                                    <div class="kpi_value">
+                                        <field name="outgoing_shipments"/>
+                                    </div>
+                                    <div class="kpi_label">Outgoing Shipments</div>
+                                </div>
+                                <div class="kpi_card kpi_primary">
+                                    <div class="kpi_value">
+                                        <field name="internal_transfers"/>
+                                    </div>
+                                    <div class="kpi_label">Internal Transfers</div>
+                                </div>
+                            </div>
+                            <div class="dashboard_action">
+                                <button name="action_view_movements"
+                                        type="object"
+                                        string="View Movement Details"
+                                        class="btn-primary"/>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Dashboard List View -->
+    <record id="view_camtel_dashboard_list" model="ir.ui.view">
+        <field name="name">camtel.dashboard.list</field>
+        <field name="model">camtel.dashboard</field>
+        <field name="arch" type="xml">
+            <list string="Dashboards" create="false" delete="false">
+                <field name="name"/>
+                <field name="warehouse_id"/>
+                <field name="date"/>
+                <field name="total_inventory_value" widget="monetary"/>
+                <field name="pending_po_count"/>
+                <field name="incoming_shipments"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Dashboard Action -->
+    <record id="action_camtel_dashboard" model="ir.actions.act_window">
+        <field name="name">Warehouse Dashboard</field>
+        <field name="res_model">camtel.dashboard</field>
+        <field name="view_mode">form,list</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Welcome to CAMTEL Warehouse Dashboard
+            </p>
+            <p>
+                Get comprehensive insights into your warehouse operations including
+                inventory levels, purchase orders, and stock movements.
+            </p>
+        </field>
+    </record>
+</odoo>

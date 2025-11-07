@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Stock Picking Extended Search View for Analytics -->
+    <record id="view_stock_picking_analytics_search" model="ir.ui.view">
+        <field name="name">stock.picking.analytics.search</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter string="Incoming" name="incoming"
+                        domain="[('picking_type_code', '=', 'incoming')]"/>
+                <filter string="Outgoing" name="outgoing"
+                        domain="[('picking_type_code', '=', 'outgoing')]"/>
+                <filter string="Internal" name="internal"
+                        domain="[('picking_type_code', '=', 'internal')]"/>
+                <separator/>
+                <filter string="This Week" name="this_week"
+                        domain="[('scheduled_date', '&gt;=', (context_today() - relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Month" name="this_month"
+                        domain="[('scheduled_date', '&gt;=', (context_today() - relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter string="Operation Type" name="group_by_picking_type"
+                        context="{'group_by': 'picking_type_id'}"/>
+                <filter string="Partner" name="group_by_partner"
+                        context="{'group_by': 'partner_id'}"/>
+                <filter string="Scheduled Date" name="group_by_scheduled_date"
+                        context="{'group_by': 'scheduled_date:day'}"/>
+                <filter string="Scheduled Week" name="group_by_week"
+                        context="{'group_by': 'scheduled_date:week'}"/>
+                <filter string="Scheduled Month" name="group_by_month"
+                        context="{'group_by': 'scheduled_date:month'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Stock Picking Graph View - Movement Analysis -->
+    <record id="view_stock_picking_analytics_graph" model="ir.ui.view">
+        <field name="name">stock.picking.analytics.graph</field>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <graph string="Movement Analysis" type="bar" sample="1">
+                <field name="scheduled_date" interval="week"/>
+                <field name="picking_type_code"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Stock Picking Graph View - Timeline -->
+    <record id="view_stock_picking_analytics_graph_line" model="ir.ui.view">
+        <field name="name">stock.picking.analytics.graph.line</field>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <graph string="Movement Timeline" type="line" sample="1">
+                <field name="scheduled_date" interval="day"/>
+                <field name="picking_type_code"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Stock Picking Pivot View -->
+    <record id="view_stock_picking_analytics_pivot" model="ir.ui.view">
+        <field name="name">stock.picking.analytics.pivot</field>
+        <field name="model">stock.picking</field>
+        <field name="arch" type="xml">
+            <pivot string="Movement Analysis" sample="1">
+                <field name="picking_type_id" type="row"/>
+                <field name="scheduled_date" interval="month" type="col"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Movement Analytics Action -->
+    <record id="action_camtel_movement_analytics" model="ir.actions.act_window">
+        <field name="name">Movement Analysis</field>
+        <field name="res_model">stock.picking</field>
+        <field name="view_mode">graph,pivot,list,form,calendar</field>
+        <field name="search_view_id" ref="view_stock_picking_analytics_search"/>
+        <field name="context">{
+            'search_default_this_month': 1,
+            'search_default_group_by_picking_type': 1
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                No movement data available
+            </p>
+            <p>
+                Stock movement analytics will appear here once you have transfers.
+            </p>
+        </field>
+    </record>
+</odoo>

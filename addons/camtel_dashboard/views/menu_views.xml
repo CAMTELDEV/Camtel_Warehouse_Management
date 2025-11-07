@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_camtel_dashboard_root"
+              name="CAMTEL Dashboard"
+              sequence="5"
+              web_icon="camtel_dashboard,static/description/icon.png"/>
+
+    <!-- Dashboard Menu -->
+    <menuitem id="menu_camtel_dashboard_main"
+              name="Dashboard"
+              parent="menu_camtel_dashboard_root"
+              action="action_camtel_dashboard"
+              sequence="1"/>
+
+    <!-- Analytics Menu Group -->
+    <menuitem id="menu_camtel_analytics"
+              name="Analytics"
+              parent="menu_camtel_dashboard_root"
+              sequence="10"/>
+
+    <!-- Inventory Analytics -->
+    <menuitem id="menu_camtel_stock_analytics"
+              name="Inventory Analysis"
+              parent="menu_camtel_analytics"
+              action="action_camtel_stock_analytics"
+              sequence="1"/>
+
+    <!-- Purchase Analytics -->
+    <menuitem id="menu_camtel_purchase_analytics"
+              name="Purchase Analysis"
+              parent="menu_camtel_analytics"
+              action="action_camtel_purchase_analytics"
+              sequence="2"/>
+
+    <!-- Movement Analytics -->
+    <menuitem id="menu_camtel_movement_analytics"
+              name="Movement Analysis"
+              parent="menu_camtel_analytics"
+              action="action_camtel_movement_analytics"
+              sequence="3"/>
+</odoo>
