@@ -1,0 +1,268 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Camtel_SMS</title>
+    <link rel="shortcut icon" href="/web/static/img/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/web/static/src/libs/fontawesome/css/font-awesome.css" />
+    <link rel="stylesheet" href="/web/static/lib/bootstrap/dist/css/bootstrap.css" />
+    <script src="/web/static/lib/bootstrap/js/dist/util/index.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/dom/data.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/dom/event-handler.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/dom/manipulator.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/dom/selector-engine.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/util/config.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/util/component-functions.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/util/backdrop.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/util/focustrap.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/util/scrollbar.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/base-component.js" ></script>
+    <script src="/web/static/lib/bootstrap/js/dist/modal.js" ></script>
+
+    <script src="/web/static/src/public/database_manager.js" ></script>
+    <style>
+        a {
+            text-decoration: none;
+        }
+        .o_database_list img {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Database List -->
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3 o_database_list">
+                <img src="/camtel_theme/static/src/img/Camtel_logo.jpeg" class="img-fluid d-block mx-auto" alt="Camtel_SMS"/>
+                <t t-if="not list_db">
+                    <div class="alert alert-danger text-center">The database manager has been disabled by the administrator</div>
+                </t>
+                <t t-elif="insecure and databases">
+                    <div class="alert alert-warning">
+                        Warning, your Camtel_SMS database manager is not protected.<br/>
+                        Please <a href="#" data-bs-toggle="modal" data-bs-target=".o_database_master">set a master password</a> to secure it.
+                    </div>
+                </t>
+                <t t-if="error">
+                    <div class="alert alert-danger" t-out="error"></div>
+                </t>
+                <t t-if="list_db and databases">
+                    <div class="list-group">
+
+                        <t t-foreach="databases" t-as="db">
+                            <div class="list-group-item d-flex align-items-center">
+                                <a t-attf-href="/odoo?db={{ db }}" class="d-block flex-grow-1">
+                                    <t t-if="db in incompatible_databases">
+                                        <i class="icon fa fa-warning float-end text-warning" title="This database may not be compatible"></i>
+                                    </t>
+                                    <t t-out="db" />
+                                </a>
+                                <t t-if="manage">
+                                    <div class="btn-group btn-group-sm float-end">
+                                        <button type="button" t-att-data-db="db" data-bs-target=".o_database_backup" class="o_database_action btn btn-primary">
+                                            <i class="fa fa-floppy-o fa-fw"></i> Backup
+                                        </button>
+                                        <button type="button" t-att-data-db="db" data-bs-target=".o_database_duplicate" class="o_database_action btn btn-secondary">
+                                            <i class="fa fa-files-o fa-fw"></i> Duplicate
+                                        </button>
+                                        <button type="button" t-att-data-db="db" data-bs-target=".o_database_delete" class="o_database_action btn btn-danger">
+                                            <i class="fa fa-trash-o fa-fw"></i> Delete
+                                        </button>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                    <t t-if="manage">
+                        <div class="d-flex mt-2">
+                            <button type="button" data-bs-toggle="modal" data-bs-target=".o_database_create" class="btn btn-primary flex-grow-1">Create Database</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target=".o_database_restore" class="btn btn-primary flex-grow-1 ms-2">Restore Database</button>
+                            <button type="button" data-bs-toggle="modal" data-bs-target=".o_database_master" class="btn btn-primary flex-grow-1 ms-2">Set Master Password</button>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="text-center mt-2">
+                            <a href="/web/database/manager">Manage databases</a>
+                        </div>
+                    </t>
+                </t>
+                <t t-elif="list_db">
+                    <form role="form" action="/web/database/create" method="post">
+                        <t t-call="create_form" />
+                        <input type="submit" value="Create database" class="btn btn-primary float-start"/>
+                    </form>
+                    <a role="button" data-bs-toggle="modal" data-bs-target=".o_database_restore" class="btn btn-link">or restore a database</a>
+                </t>
+            </div>
+        </div>
+
+        <!-- Create -->
+        <div class="modal fade o_database_create" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form role="form" action="/web/database/create" method="post">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Create Database</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <t t-call="master_input" />
+                            <t t-call="create_form" />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Duplicate -->
+        <div class="modal fade o_database_duplicate" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form role="form" action="/web/database/duplicate" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="csrf_token" />
+                        <div class="modal-header">
+                            <h4 class="modal-title">Duplicate Database</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <t t-call="master_input" />
+                            <div class="form-group mb-3">
+                                <label for="name" class="form-label">Database Name</label>
+                                <input name="name" t-att-pattern="pattern" required="required" type="text" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Duplicate</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete -->
+        <div class="modal fade o_database_delete" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form role="form" action="/web/database/delete" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="csrf_token" />
+                        <div class="modal-header">
+                            <h4 class="modal-title">Delete Database</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <t t-call="master_input" />
+                            <div class="alert alert-danger">
+                                Deleting a database is a permanent action and cannot be undone!
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup -->
+        <div class="modal fade o_database_backup" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form role="form" action="/web/database/backup" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="csrf_token" />
+                        <div class="modal-header">
+                            <h4 class="modal-title">Backup Database</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <t t-call="master_input" />
+                            <div class="form-group mb-3">
+                                <label for="backup_format" class="form-label">Backup Format</label>
+                                <select name="backup_format" class="form-select" required="required">
+                                    <option value="zip">ZIP (includes filestore)</option>
+                                    <option value="dump">DUMP (database only)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Backup</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Restore -->
+        <div class="modal fade o_database_restore" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form role="form" action="/web/database/restore" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" t-att-value="csrf_token" />
+                        <div class="modal-header">
+                            <h4 class="modal-title">Restore Database</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <t t-call="master_input" />
+                            <div class="form-group mb-3">
+                                <label for="backup_file" class="form-label">File</label>
+                                <input name="backup_file" type="file" required="required" class="form-control" />
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="name" class="form-label">Database Name</label>
+                                <input name="name" t-att-pattern="pattern" type="text" required="required" class="form-control" />
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="copy" value="true" id="o_database_restore_copy" class="form-check-input"/>
+                                <label for="o_database_restore_copy" class="form-check-label">This database is a copy</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Restore</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Change Master Password -->
+        <div class="modal fade o_database_master" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form role="form" action="/web/database/change_password" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="csrf_token" />
+                        <div class="modal-header">
+                            <h4 class="modal-title">Set Master Password</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <t t-call="master_input">
+                                <t t-set="label">Old Master Password</t>
+                            </t>
+                            <div class="form-group mb-3">
+                                <label for="new_password" class="form-label">New Master Password</label>
+                                <input name="new_password" type="password" autocomplete="new-password" required="required" class="form-control"/>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="confirm_password" class="form-label">Confirm New Master Password</label>
+                                <input name="confirm_password" type="password" autocomplete="new-password" required="required" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
