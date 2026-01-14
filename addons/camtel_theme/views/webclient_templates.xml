@@ -7,42 +7,31 @@
         </xpath>
     </template>
 
-    <!-- Remove Manage Databases option and change Powered by Odoo to Powered by Camtel_SMS from login layout -->
+    <!-- Override web.login_layout to change "Powered by Odoo" to "Powered by Camtel_SMS" and remove Manage Databases -->
     <template id="login_layout_camtel" inherit_id="web.login_layout">
-        <xpath expr="//t[@t-if='not disable_database_manager']" position="replace">
-            <!-- Remove the manage databases link -->
-        </xpath>
-        <xpath expr="//a[@href='https://www.odoo.com?utm_source=db&amp;utm_medium=auth']" position="replace">
-            <span>Powered by <span style="font-weight: bold; color: #09AEEF;">Camtel_SMS</span></span>
+        <!-- Replace the Manage Databases and Powered by Odoo footer -->
+        <xpath expr="//div[@class='text-center small mt-4 pt-3 border-top']" position="replace">
+            <div class="text-center small mt-4 pt-3 border-top" t-if="not disable_footer">
+                <a href="/" target="_blank">Powered by <span style="font-weight: bold; color: #09AEEF;">Camtel_SMS</span></a>
+            </div>
         </xpath>
     </template>
 
     <!-- Override brand promotion message to show Camtel_SMS instead of Odoo -->
     <template id="brand_promotion_message_camtel" inherit_id="web.brand_promotion_message">
         <xpath expr="//t[@t-set='odoo_logo']" position="replace">
-            <t t-set="camtel_logo">
-                <span class="badge text-bg-light" style="color: #09AEEF; font-weight: bold;">
+            <t t-set="odoo_logo">
+                <span class="badge text-bg-light" style="color: #09AEEF; font-weight: bold; text-decoration: none;">
                     Camtel_SMS
                 </span>
             </t>
         </xpath>
-        <xpath expr="//t[@t-set='final_message']" position="replace">
-            <t t-set="final_message">Powered by %s%s</t>
-        </xpath>
-        <xpath expr="//t[@t-out]" position="replace">
-            <t t-out="final_message % (camtel_logo, _message and (' - ' + _message) or '')"/>
-        </xpath>
     </template>
 
-    <!-- Override offline page to replace Odoo references -->
-    <template id="webclient_offline_camtel" inherit_id="web.webclient_offline">
-        <xpath expr="//div[@class='card']" position="replace">
-            <div class="card">
-                <img t-attf-src="data:image/png;base64,{{odoo_icon}}" alt="Camtel_SMS logo"/>
-                <h1>You are offline</h1>
-                <p>Check your network connection and come back here. Camtel_SMS will load as soon as you're back online.</p>
-                <button onclick="location.reload()">Check again</button>
-            </div>
+    <!-- Override frontend layout to change page title -->
+    <template id="frontend_layout_camtel" inherit_id="web.frontend_layout">
+        <xpath expr="//title" position="replace">
+            <title t-esc="title or 'Camtel_SMS'"/>
         </xpath>
     </template>
 </odoo>

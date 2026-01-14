@@ -21,6 +21,7 @@
     "assets": {
         "web.assets_frontend": [
             "camtel_theme/static/src/scss/login_theme.scss",
+            "camtel_theme/static/src/js/title_service.js",
         ],
         "web.assets_common": [
             "camtel_theme/static/src/scss/login_theme.scss",
