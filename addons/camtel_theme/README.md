@@ -1,13 +1,15 @@
 # CAMTEL Theme
 
-A custom Odoo theme module for CAMTEL that provides login page customizations.
+A custom Odoo theme module for CAMTEL that provides branding customizations and login page styling with Camtel_SMS branding.
 
 ## Features
 
 - **Warehouse Background Image**: Full-screen warehouse.jpg background image on login page
 - **Blue Buttons**: All login buttons are styled with blue background and white text
 - **Remove Manage Databases**: The "Manage Databases" link is hidden from the login page
-- **Custom Footer**: Changes "Powered by Odoo" to "Powered by Blue" (bold and blue text)
+- **Camtel_SMS Branding**: Changes all "Odoo" references to "Camtel_SMS" throughout the application
+- **Custom Page Titles**: Displays "Camtel_SMS" in browser page titles and tab labels
+- **Custom Footer**: Changes "Powered by Odoo" to "Powered by Camtel_SMS" (bold and blue text)
 
 ## Installation
 
@@ -17,10 +19,10 @@ A custom Odoo theme module for CAMTEL that provides login page customizations.
 
 ## Technical Details
 
-## Technical Details
-
-- Inherits from `web.login_layout` template using XPath expressions
+- Inherits from `web.layout`, `web.login_layout`, and `web.brand_promotion_message` templates using XPath expressions
 - Applies SCSS styling to buttons and background via asset bundles
+- Custom page title service (`title_service.js`) replaces the default Odoo title service with Camtel_SMS branding
+- Database manager template customized with Camtel_SMS logo and branding
 - Uses inline styles for footer text customization
 - Compatible with Odoo 19.0
 
